@@ -1,0 +1,18 @@
+<div id="messages" class="row bg-light">
+    <div class="col-4 offset-3">
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == "error"%}
+                    <input type="hidden" id="errors_exist" value="true">
+                    <script>
+                        toastr.error('{{ message }}')
+                    </script>
+                {% elif message.tags == "success"%}
+                    <script>
+                        toastr.success('{{ message }}')
+                    </script>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>

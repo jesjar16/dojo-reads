@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block title %}Book Reviews{% endblock %}
+
+{% block content %}
+    {% include "menu.html" %}
+    <script>
+        $( document ).ready(function() {
+            console.log( "ready!" );
+
+            // actions on delete button for review
+            $(document).on("click", "#delete_review", function () {
+                let reviewId = $(this).attr('data-bs-id');
+                let bookTitle = $(this).attr('data-bs-title');
+
+                $(".modal-footer #reviewId").val(reviewId);
+                $(".modal-body #bookTitle").text(bookTitle);
+
+                $('#deleteReviewModal').modal('show');
+                
+            });
+        });
+        
+    </script>
+    <div class="row">
+        <div class="row py-3 ps-5">
+            <h3>Welcome, {{ request.session.user_data.name }} ({{ request.session.user_data.alias }})!</h3>
+            <hr>
+            <!-- Add a Favorite Book, left side-->
+            <div class="col-6 pt-3 pb-5">
+                <div class="row">
+                    <h4>{{ this_book.title }}</h4>
+                </div>
+                <div class="row pb-4">
+                    <h6>{{ this_book.author.name }}</h6>
+                </div>
+                {% if all_book_reviews %}
+                    {% for review in all_book_reviews %}
+                        <div class="row ps-4 border-top pt-2">
+                            <p>Rating: 
+                                <!-- Stars -->
+                                {% if review.rating == 1 %}
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                {% elif review.rating == 2 %}
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                {% elif review.rating == 3 %}
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                {% elif review.rating == 4 %}
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                {% elif review.rating == 5 %}
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="row ps-4">
+                            <p><a href="{% url 'my_users' user_id=review.user.id %}">{{ review.user.alias }}</a> says: {{ review.review }}</p>
+                        </div>
+                        <div class="row ps-4 fst-italic mb-3">
+                            <div class="col-6">
+                                <p>Posted on: {{ review.created_at }}</p>
+                            </div>
+                            {% if this_user.id == review.user.id %}
+                                <div class="col-6 text-end">
+                                    <button type="submit" id="delete_review" data-bs-id="{{ review.id }}" data-bs-title="{{ review.book.title }}" class="btn btn-danger">Delete Review</button>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="row mb-3">
+                        <p>No books and reviews added so far</p>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="col-6 pt-3 pb-5">
+                <div class="row pb-4" >
+                    <div class="row pb-4">
+                        <h4>Other Books with Reviews:</h4>
+                    </div>
+                    <div id="books_list">
+                        <!-- Displays Review Form, right side-->
+                        <form id="book_review_form" name="book_review_form" action="{% url 'my_add_sm_review' %}" method="POST">
+                            {% csrf_token %}          
+                            <div class="row mb-3">
+                                <div class="col-3">
+                                    <label for="review" class="form-label"><h6>Add a Review:</h6></label>
+                                </div>
+                                <div class="col-9">
+                                    <textarea class="form-control" id="review" name="review">{{ request.session.form_data.review }}</textarea>
+                                </div>
+                                <input type="hidden" id="book_id" name="book_id" value="{{ this_book.id }}">
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-3">
+                                    <label for="rating" class="form-label"><h6>Rating:</h6></label>
+                                </div>
+                                <div class="col-9">
+                                    <input type="number" id="rating" name="rating" min="1" max="5" value="{{ request.session.form_data.rating }}"> <h6 class="d-inline">stars.</h6>
+                                </div>
+                            </div>
+                            <div class="row mt-4 text-end">
+                                <div class="col-8 offset-4">
+                                    <button type="submit" class="btn btn-dark">Submit Review</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Delete Review Modal -->
+    <div class="modal fade" id="deleteReviewModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Delete Confirmation</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h5>Are you sure you want to delete the following book?</h5>
+                <p>Book: <span id="bookTitle"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                <form id="delete_review_form" action="{% url 'my_del_breview' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" id="reviewId" name="reviewId" value="">
+                    <input type="hidden" id="book_id" name="book_id" value="{{ this_book.id }}">
+                    <button type="submit" id="confirm_delete_btn" class="btn btn-danger">Yes! I want to delete this!</button>
+                </form>
+            </div>
+        </div>
+        </div>
+    </div>
+{% endblock %}    

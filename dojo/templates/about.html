@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}About Me{% endblock %}
+
+{% block content %}
+    {% include "menu.html" %}
+    <div class="row">
+        <div class="row py-3 ps-5">
+            <div class="col-10">
+                <h3>Welcome, {{ request.session.user_data.name }} ({{ request.session.user_data.alias }})!</h3>
+                <h5 class="text-success pt-3">This is the About Me page
+                </h5>
+            </div>
+        </div>
+        <div class="row py-3 ps-5">
+            <p>Here's the About Me page content</p>
+        </div>
+    </div>
+{% endblock %}    

@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block title %}Login & Registration{% endblock %}
+
+{% block content %}
+<!-- UNCOMMENT THIS BLOCK AND COMMENT JAVASCRIPT VALIDATION SECTION ON BASE.HTML 
+     TO USE THE FOLLOWING AJAX VALIDATION INSTEAD 
+<script>
+    $( document ).ready(function() {
+        console.log( "ready!" );
+
+        // calling ajax on register_form
+        $('#register_form').submit(function(e){
+            // preventDefault detiene la activación de la accion predeterminada del evento (e)
+            e.preventDefault();
+            console.log("Form submitted but no HTTP request sent to server!");
+            $.ajax({
+                url: "{% url 'my_register' %}",
+                method: "post",
+                data: $(this).serialize(),
+                success: function(serverResponse){
+                    console.log("Received this from server: ", serverResponse)
+                    //console.log("I should probably put that in the DOM...")
+                    
+                    if ($('#messages').html(serverResponse) && $('#errors_exist').length) 
+                    {
+                        console.log("Error messages exist"); 
+                    }
+                    else 
+                    {
+                        console.log("No error messages"); 
+                        
+                        document.documentElement.innerHTML = '';
+                        window.location.href = "{% url 'my_success' %}";
+                    }
+                }
+            })
+        });
+
+        // calling ajax on login_form
+        $('#login_form').submit(function(e){
+            // preventDefault detiene la activación de la accion predeterminada del evento (e)
+            e.preventDefault();
+            console.log("Form submitted but no HTTP request sent to server!");
+            $.ajax({
+                url: "{% url 'my_login' %}",
+                method: "post",
+                data: $(this).serialize(),
+                success: function(serverResponse){
+                    console.log("Received this from server: ", serverResponse)
+                    //console.log("I should probably put that in the DOM...")
+                         
+                    if ($('#messages').html(serverResponse) && $('#errors_exist').length){
+                        console.log("Error messages exist"); 
+                    }
+                    else 
+                    {
+                        console.log("No error messages"); 
+                        
+                        document.documentElement.innerHTML = '';
+                        window.location.href = "{% url 'my_success' %}";
+                    }
+                }
+            })
+        });
+
+    });
+</script>-->
+
+<div class="row">
+    <div class="col-6 pt-3 pb-5">
+        <div class="row pb-4">
+            <h2>Registration</h2>
+        </div>
+        <form id="register_form" name="register_form" action="{% url 'my_register' %}" method="POST">
+            {% csrf_token %}
+            <div class="row mb-3">
+                <div class="col-3">
+                    <label for="name" class="form-label">Name:</label>
+                </div>
+                <div class="col-9">
+                    <input type="text" class="form-control" id="name" name="name" value="{{ request.session.form_data.name }}">
+                </div>
+            </div>                        
+            <div class="row mb-3">
+                <div class="col-3">
+                    <label for="alias" class="form-label">Alias:</label>
+                </div>
+                <div class="col-9">
+                    <input type="text" class="form-control" id="alias" name="alias" value="{{ request.session.form_data.alias }}">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-3">
+                    <label for="email" class="form-label">Email:</label>
+                </div>
+                <div class="col-9">
+                    <input type="text" class="form-control" id="email" name="email" value="{{ request.session.form_data.email }}">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-3">
+                    <label for="password" class="form-label">Password:</label>
+                </div>
+                <div class="col-9">
+                    <input type="password" class="form-control" id="password" name="password" value="">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-12">
+                    <p>* Password should be at least 8 characters</p>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-3">
+                    <label for="password2" class="form-label">Confirm PW:</label>
+                </div>
+                <div class="col-9">
+                    <input type="password" class="form-control" id="password2" name="password2" value="">
+                </div>
+            </div>
+            <div class="row mt-4 text-center">
+                <div class="col-4 offset-4">
+                    <button type="submit" class="btn btn-dark">Register</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="col-6 pt-3 pb-5">
+        <div class="row pb-4">
+            <h2>Login</h2>
+        </div>
+        <form id="login_form" name="login_form" action="{% url 'my_login' %}" method="POST">
+            {% csrf_token %}
+            <div class="row mb-3">
+                <div class="col-3">
+                    <label for="email_login" class="form-label">Email:</label>
+                </div>
+                <div class="col-9">
+                    <input type="text" class="form-control" id="email_login" name="email_login" value="{{ request.session.form_data.email_login }}">
+                </div>
+            </div>                        
+            <div class="row mb-3">
+                <div class="col-3">
+                    <label for="password_login" class="form-label">Password:</label>
+                </div>
+                <div class="col-9">
+                    <input type="password" class="form-control" id="password_login" name="password_login" value="">
+                </div>
+            </div>
+            <div class="row mt-4 text-center">
+                <div class="col-4 offset-4">
+                    <button type="submit" class="btn btn-dark">Login</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

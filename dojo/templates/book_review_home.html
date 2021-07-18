@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}Books Home{% endblock %}
+
+{% block content %}
+    {% include "menu.html" %}
+    <div class="row">
+        <div class="row py-3 ps-5">
+            <h3>Welcome, {{ request.session.user_data.name }} ({{ request.session.user_data.alias }})!</h3>
+            <hr>
+            <!-- Add a Favorite Book, left side-->
+            <div class="col-6 pt-3 pb-5">
+                <div class="row pb-4">
+                    <h4>Recent Book Reviews</h4>
+                </div>
+                {% if first_3_reviews %}
+                    {% for review in first_3_reviews %}
+                        <div class="row mb-3">
+                            <h5><a href="{% url 'my_book' book_id=review.book.id %}">{{ review.book.title }}</a></h5>
+                        </div>
+                        <div class="row ps-4">
+                            <p>Rating: 
+                                <!-- Stars -->
+                                {% if review.rating == 1 %}
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                {% elif review.rating == 2 %}
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                {% elif review.rating == 3 %}
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                {% elif review.rating == 4 %}
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                {% elif review.rating == 5 %}
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                {% endif %}
+
+                            </p>
+                        </div>
+                        <div class="row ps-4">
+                            <p><a href="{% url 'my_users' user_id=review.user.id %}">{{ review.user.alias }}</a> says: {{ review.review }}</p>
+                        </div>
+                        <div class="row ps-4 fst-italic">
+                            <p>Posted on: {{ review.created_at }}</p>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="row mb-3">
+                        <p>No books and reviews added so far</p>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="col-6 pt-3 pb-5">
+                <div class="row pb-4" >
+                    <h4>Other Books with Reviews:</h4>
+                    <div id="books_list">
+                        <!-- Displays All Books, right side-->
+                        {% if rest_of_reviews %}
+                            <div id="other_books">
+                            {% for review in rest_of_reviews %}
+                                <div class="row mb-3">
+                                    <a href="{% url 'my_book' book_id=review.book.id %}">{{ review.book.title }}</a>
+                                </div>
+                            {% endfor %}
+                            </div>
+                        {% else %} <!-- No books added so far-->
+                        <div class="row pb-4">
+                            <p>No books added so far... Be the first to add a book!</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}    

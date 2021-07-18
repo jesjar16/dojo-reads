@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}User Reviews{% endblock %}
+
+{% block content %}
+    {% include "menu.html" %}
+    <div class="row">
+        <div class="row py-3 ps-5">
+            <h3>Welcome, {{ request.session.user_data.name }} ({{ request.session.user_data.alias }})!</h3>
+            <hr>
+            <!-- Add a Favorite Book, left side-->
+            <div class="col-6 pt-3 pb-5">
+                <div class="row pb-4">
+                    <h4>User Alias: {{ this_user.alias }}</h4>
+                </div>
+                <div class="row mb-3">
+                    <h6>Name: {{ this_user.name }}</h6>
+                </div>
+                <div class="row mb-3">
+                    <h6>Email: {{ this_user.email }}</h6>
+                </div>
+                <div class="row mb-5">
+                    <h6>Total Reviews: {{ total_reviews }}</h6>
+                </div>
+                {% if user_reviews %}
+                    <div class="row mb-3 mt-3">
+                        <h6>Posted Reviews on the following books: </h6>
+                    </div>
+                    {% for review in user_reviews %}
+                        <div class="row mb-3 ps-3">
+                            <a href="{% url 'my_book' book_id=review.book.id %}">{{ review.book.title }}</a>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="row mb-3">
+                        <p>This user has not made any book review</p>
+                    </div>
+                {% endif %}
+            </div>
+        
+        </div>
+    </div>
+
+{% endblock %}    
